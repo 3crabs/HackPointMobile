@@ -13,19 +13,31 @@
       </section>
 
       <section>
-        <Team team-name='3CRABS'/>
+        <Team @click='teamMark(1, "3CRABS")' team-name='3CRABS' :verified='true'/>
       </section>
     </q-page-container>
   </q-layout>
 </template>
 
-<script>
-import MainHeader from '../../components/Header/MainHeader';
-import Team from '../../components/Teams/Team';
-export default {
+<script lang='ts'>
+import { defineComponent } from 'vue'
+import { useRouter } from 'vue-router'
+import MainHeader from '../../components/Header/MainHeader.vue';
+import Team from '../../components/Teams/Team.vue';
+export default defineComponent({
   name: 'Teams',
-  components: { Team, MainHeader }
-};
+  components: { Team, MainHeader },
+  setup() {
+    const router = useRouter();
+
+
+    return {
+      async teamMark(id: number, name: string) {
+        await router.push(`/team?id=${id}&name=${name}`)
+      }
+    }
+  }
+});
 </script>
 
 <style scoped>

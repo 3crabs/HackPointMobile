@@ -15,7 +15,11 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/teams',
-    component: () => import('pages/Main/Teams.vue')
+    component: () => import('pages/Teams/Teams.vue')
+  },
+  {
+    path: '/team',
+    component: () => import('pages/Teams/TeamPoint.vue'),
   },
 
   // Always leave this as last one,

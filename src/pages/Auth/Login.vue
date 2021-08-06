@@ -73,7 +73,6 @@ export default defineComponent({
       errorMessage,
 
       async onSubmit() {
-        console.log(loginRef)
         loginRef.value.validate();
         if(loginRef.value.hasError) {
           return
