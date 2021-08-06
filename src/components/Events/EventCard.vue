@@ -24,9 +24,9 @@
 <script>
 import {defineComponent} from 'vue'
 import {useRouter} from 'vue-router'
-import ReadyState from 'components/StateChips/ReadyState';
+import ReadyState from 'components/StateChips/ReadyState.vue';
 import {States} from 'components/Events/EventsStates';
-import ProcessState from 'components/StateChips/ProcessState';
+import ProcessState from 'components/StateChips/ProcessState.vue';
 export default defineComponent({
   name: 'EventCard',
   components: { ProcessState, ReadyState },
