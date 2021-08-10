@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import MainHeader from '../../components/Header/MainHeader';
+import MainHeader from '../../components/Header/MainHeader.vue';
 export default {
   name: 'MarkTeam',
   components: { MainHeader }
