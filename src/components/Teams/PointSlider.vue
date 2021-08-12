@@ -1,54 +1,60 @@
 <template>
-  <q-card
-    v-if='currentPoint !== testPointsArray.length'
-    class='flex column items-center justify-center text-white'
-    flat
-    v-touch-swipe.mouse.right.left='handleSwipe'
+  <swiper
+    :space-between="50"
+    @swiper="onSwiper"
   >
-    <q-card-section class='text-center'>
-      <div class='name'>
-          {{testPointsArray[currentPoint].name}}
-      </div>
+    <swiper-slide
+      v-for='point in testPointsArray' :key='point.name'>
+      <q-card
+        class='flex column items-center justify-center text-white'
+        flat
+      >
+        <q-card-section class='text-center'>
+          <div class='name'>
+            {{point.name}}
+          </div>
 
-      <div class='description'>
-        {{testPointsArray[currentPoint].description}}
-      </div>
-    </q-card-section>
+          <div class='description'>
+            {{point.description}}
+          </div>
+        </q-card-section>
 
-    <q-card-section>
-        <q-avatar
-          @click='setMark(index)'
-          v-for='(index) in 5'
-          :key='index'
-          :class='index === testPointsArray[currentPoint].currentMark ?
+        <q-card-section>
+          <q-avatar
+            @click='setMark(index)'
+            v-for='(index) in 5'
+            :key='index'
+            :class='index === point.currentMark ?
               "selected-point" :
               ""'
-        >
-          {{index}}
-        </q-avatar>
-    </q-card-section>
+          >
+            {{index}}
+          </q-avatar>
+        </q-card-section>
+<!-- TODO Заглушечка на 80 процентов -->
+        <q-card-section class='q-mt-lg flex justify-between' style='width: 80%;'>
+          <q-icon @click='turnLeft' name="chevron_left"/>
+          <q-icon @click='turnRight' name="chevron_right"/>
+        </q-card-section>
+      </q-card>
 
-    <q-card-section class='q-mt-lg flex justify-between full-width'>
-      <q-icon @click='turnLeft' name="chevron_left"/>
-      <q-icon @click='turnRight' name="chevron_right"/>
-    </q-card-section>
-  </q-card>
+    </swiper-slide>
 
-  <q-card
-    v-else
-    class='flex column items-center justify-center finished-point'
-    flat
-    v-touch-swipe.mouse.right='handleSwipe'
-  >
-    <q-card-section class='text-bold'>
-      Больше критериев нет
-    </q-card-section>
+    <swiper-slide>
+      <q-card
+        class='flex column items-center justify-center finished-point'
+        flat
+      >
+        <q-card-section class='text-bold'>
+          Больше критериев нет
+        </q-card-section>
 
-    <q-card-section class='full-width'>
-      <q-btn class='full-width' label='Закончить' flat no-caps/>
-    </q-card-section>
-  </q-card>
-
+        <q-card-section class=''>
+          <q-btn class='' label='Закончить' flat no-caps/>
+        </q-card-section>
+      </q-card>
+    </swiper-slide>
+  </swiper>
   <div class='q-mt-lg text-bold notes'>
     Заметки
   </div>
@@ -59,11 +65,21 @@
 <script lang='ts'>
 import { Point } from 'src/types/Point';
 import { defineComponent, ref } from 'vue';
+
+import {Swiper, SwiperSlide} from 'swiper/vue';
+import 'swiper/swiper.scss';
+
 export default defineComponent({
   name: 'PointSlider',
+  components: {
+    Swiper,
+    SwiperSlide,
+  },
   setup() {
     const currentPoint = ref(0)
-    const testPointsArray = [
+
+    const swiperComponent = ref<unknown>(null)
+    const testPointsArray = ref <Array<Point>>([
       {
         name: 'Бизнес-составляющая',
         description: 'Оригинальность подхода,' +
@@ -76,40 +92,43 @@ export default defineComponent({
           'подготовка выступления',
         currentMark: 3
       }
-    ] as Array<Point>
+    ])
 
     const turnRight = () => {
-      if (currentPoint.value < testPointsArray.length) {
-        currentPoint.value += 1
+      if (swiperComponent.value.activeIndex < testPointsArray.value.length) {
+        swiperComponent.value.slideTo(Number(swiperComponent.value.activeIndex) + 1)
       }
     }
 
     const turnLeft = () => {
-      if (currentPoint.value > 0) {
-        currentPoint.value -=1
+      if (swiperComponent.value.activeIndex > 0) {
+        swiperComponent.value.slideTo(Number(swiperComponent.value.activeIndex) - 1)
       }
     }
 
+    const setMark = (newMark : number) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      testPointsArray.value[swiperComponent.value.activeIndex].currentMark = newMark;
+      turnRight()
+    }
+
+
+    const onSwiper = (swiper: unknown) => {
+      swiperComponent.value = swiper
+    }
 
     return {
       currentPoint,
       testPointsArray,
+
+      swiperComponent,
+
+      setMark,
       turnLeft,
       turnRight,
 
-      setMark(newMark : number){
-        testPointsArray[currentPoint.value].currentMark = newMark;
-        currentPoint.value += 1;
-      },
+      onSwiper,
 
-      handleSwipe({...newInfo}) {
-        if(newInfo.direction === 'right') {
-          turnLeft()
-        } else {
-          turnRight()
-
-        }
-      }
     }
   }
 });
